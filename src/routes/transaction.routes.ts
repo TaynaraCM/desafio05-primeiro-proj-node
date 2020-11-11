@@ -8,10 +8,10 @@ const transactionsRepository = new TransactionsRepository();
 
 transactionRouter.get('/', (request, response) => {
   try {
-    const allTransactions = transactionsRepository.all();
+    const transactions = transactionsRepository.all();
     const balance = transactionsRepository.getBalance();
 
-    const transactionsAndBalance = { transactions: allTransactions, balance };
+    const transactionsAndBalance = { transactions, balance };
 
     return response.json(transactionsAndBalance);
   } catch (err) {
@@ -22,13 +22,6 @@ transactionRouter.get('/', (request, response) => {
 transactionRouter.post('/', (request, response) => {
   try {
     const { title, value, type } = request.body;
-
-    const balance = transactionsRepository.getBalance();
-    console.log(balance);
-
-    if (type === 'outcome' && value > balance.total) {
-      throw Error('Not enought balance');
-    }
 
     const createTransaction = new CreateTransactionService(
       transactionsRepository,
