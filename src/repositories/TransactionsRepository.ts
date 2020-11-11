@@ -25,21 +25,27 @@ class TransactionsRepository {
   }
 
   public getBalance(): Balance {
-
-    let income = 0;
-    let outcome = 0;
-    const arrayOfTransactions = this.transactions;
-    arrayOfTransactions.forEach(transaction => {
-      if (transaction.type === 'income') {
-        income += transaction.value;
-      } else if (transaction.type === 'outcome') {
-        outcome += transaction.value;
-      } else {
-        throw Error('This is not a valid transaction');
-      }
-    });
+    const { income, outcome } = this.transactions.reduce(
+      (acc: Balance, transaction: Transaction) => {
+        switch (transaction.type) {
+          case 'income':
+            acc.income += transaction.value;
+            break;
+          case 'outcome':
+            acc.outcome += transaction.value;
+            break;
+          default:
+            break;
+        }
+        return acc;
+      },
+      {
+        income: 0,
+        outcome: 0,
+        total: 0,
+      },
+    );
     const total = income - outcome;
-
     return { income, outcome, total };
   }
 
